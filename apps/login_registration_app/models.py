@@ -1,5 +1,6 @@
 from django.db import models
-from time import localtime, strftime
+from time import localtime, strftime, strptime
+from datetime import date, datetime
 import re
 import bcrypt
 
@@ -14,7 +15,11 @@ class UserManager(models.Manager):
         for x in all_users:
             all_users_emails.append(x.email)
 
+
         if postData['register_login'] == 'register':
+            birthday = datetime.strptime(postData['birthday'], '%Y-%M-%d')
+            age = calculate_age(birthday)
+
             if len(postData['first_name']) < 3:
                 errors['title'] = "User First Name should be more than 3 characters"
             if len(postData['last_name']) < 3:
@@ -23,8 +28,10 @@ class UserManager(models.Manager):
                 errors['email'] = ("Invalid email address!")
             if postData['email'] in all_users_emails:
                 errors['title'] = "Email alreay exists"
-            if postData['birthday'] > strftime("%Y-%m-%d %H:%M %p", localtime()):
+            if postData['birthday'] > strftime("%Y-%m-%d", localtime()):
                 errors['birthday'] = "Birthday should be in the past"
+            if age < 13:
+                errors['age'] = "Must be 13 years old or older"
             if len(postData['password']) < 6:
                 errors['password_length'] = "Password should be more than 6 characters"
             if postData['password'] != postData['confirm_password']:
@@ -44,8 +51,6 @@ class UserManager(models.Manager):
                 errors['password'] = "Invalid password"
             return errors
 
-
-
 # Create your models here.
 class User(models.Model):
     first_name = models.CharField(max_length=45)
@@ -59,3 +64,8 @@ class User(models.Model):
 
     def __repr__(self):
         return f"<User object: {self.id}>"
+
+def calculate_age(born):
+    today = date.today()
+    return today.year - born.year - \
+           ((today.month, today.day) < (born.month, born.day))

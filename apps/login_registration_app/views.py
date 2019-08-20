@@ -65,4 +65,3 @@ def logout(request):
     request.session['user_id'] = 'logged out'
 
     return redirect("/")
-
