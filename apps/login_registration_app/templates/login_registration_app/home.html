@@ -1,0 +1,99 @@
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta name="description" content="">
+        <meta name="author" content="">
+
+        <title>Register and Log In</title>
+
+        <!-- Bootstrap core CSS -->
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    </head>
+
+<body class="bg-light">
+
+    <nav class="navbar navbar-dark bg-secondary">
+    </nav>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-6">
+
+                <div class="py-5">
+                    <h2>Register</h2>
+                </div>
+                <div style="display:{{request.session.registration_message}}">
+                {% if messages %}
+                <ul class="messages border border-warning" style="width: 90%">
+                    {% for message in messages %}
+                        <li {% if message.tags %} class="{{ message.tags }}"{% endif %}> {{message}} </li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+                </div>
+                <form action="/createuser" method="POST">
+                {% csrf_token %}
+                    <div class="col-md-6 mb-3">
+                        <input type="hidden" id="custId" name="register_login" value="register">
+
+                        <label for="title">First Name:</label>
+                        <input type="text" class="form-control" name="first_name" placeholder="First Name" required="">
+
+                        <label for="network">Last Name: </label>
+                        <input type="text" class="form-control" name="last_name" placeholder="Last Name" required="">
+
+                        <label for="email">Email: </label>
+                        <input type="text" class="form-control" name="email" placeholder="Email" required="">
+                        
+                        <label for="birthday">Birthday: </label>
+                        <input class="form-control" type="date" name="birthday" required="">
+
+                        <label for="password">Password: </label>
+                        <input type="password" class="form-control" name="password" required="">
+
+                        <label for="confirm_password">Confirm Password: </label>
+                        <input type="password" class="form-control" name="confirm_password" required="">
+                    </div>
+
+                    <div class="col-md-6 mb-3 text-center">
+                        <button class="btn btn-info btn-med btn-block" type="submit">Register</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="col-6">
+                <div class="py-5">
+                    <h2>Log In</h2>
+                </div>
+                <div style="display:{{request.session.login_message}}">
+                {% if messages %}
+                <ul class="messages border border-warning" style="width: 90%">
+                    {% for message in messages %}
+                        <li {% if message.tags %} class="{{ message.tags }}"{% endif %}> {{message}} </li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+                </div>
+                <form action="/login" method="POST">
+                {% csrf_token %}
+                    <div class="col-md-6 mb-3">
+                        <input type="hidden" id="custId" name="register_login" value="login">
+
+                        <label for="email">Email: </label>
+                        <input type="text" class="form-control" name="email" placeholder="Email" required="">
+
+                        <label for="password">Password: </label>
+                        <input type="password" class="form-control" name="password" required="">
+                    </div>
+
+                    <div class="col-md-6 mb-3 text-center">
+                        <button class="btn btn-info btn-med btn-block" type="submit">Log In</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    </body>
+</html>
