@@ -6,7 +6,7 @@ import bcrypt
 
 # Create your views here.
 def home(request):
-    return render(request, 'login_registration_app/home.html')
+    return render(request, 'login_registration_app/login_registration_home.html')
 
 def success(request):
     if request.session['user_id'] == 'logged out':

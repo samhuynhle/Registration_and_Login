@@ -32,9 +32,6 @@ class UserManager(models.Manager):
 
             return errors
 
-
-
-
         if postData['register_login'] == 'login':
             if postData['email'] not in all_users_emails:
                 errors['title'] = "Email does not exist"
