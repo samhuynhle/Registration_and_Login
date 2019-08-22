@@ -20,10 +20,10 @@ class UserManager(models.Manager):
             birthday = datetime.strptime(postData['birthday'], '%Y-%M-%d')
             age = calculate_age(birthday)
 
-            if len(postData['first_name']) < 3:
-                errors['title'] = "User First Name should be more than 3 characters"
-            if len(postData['last_name']) < 3:
-                errors['title'] = "User First Name should be more than 3 characters"
+            if len(postData['first_name']) < 2:
+                errors['title'] = "User first name should be more than 3 characters"
+            if len(postData['last_name']) < 2:
+                errors['title'] = "User last name should be more than 3 characters"
             if not EMAIL_REGEX.match(postData['email']):            
                 errors['email'] = ("Invalid email address!")
             if postData['email'] in all_users_emails:
@@ -43,7 +43,6 @@ class UserManager(models.Manager):
             if postData['email'] not in all_users_emails:
                 errors['title'] = "Email does not exist"
                 return errors
-            
             current_user = User.objects.get(email = postData['email'])
             if bcrypt.checkpw(postData['password'].encode(), current_user.password.encode()):
                 print("Password OK")

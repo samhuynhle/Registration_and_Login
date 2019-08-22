@@ -6,6 +6,8 @@ import bcrypt
 
 # Create your views here.
 def home(request):
+    request.session['user_id'] == 'logged out'
+
     return render(request, 'login_registration_app/login_registration_home.html')
 
 def success(request):
@@ -19,6 +21,9 @@ def success(request):
     return render(request, 'login_registration_app/success.html', context)
 
 def create(request):
+    if request.session['user_id'] != 'logged out':
+        return redirect('/')
+    
     if request.method == 'POST':
         request.session['login_message'] = 'none'
         request.session['registration_message'] = 'inline-block'
@@ -35,31 +40,37 @@ def create(request):
             return redirect('/')
 
         else:
-            new_entry = User.objects.create(first_name=request.POST['first_name'], last_name=request.POST['last_name'], email=request.POST['email'], birthday=request.POST['birthday'], password=pw_hash)
+            new_entry = User.objects.create(
+                first_name=request.POST['first_name'],
+                last_name=request.POST['last_name'],
+                email=request.POST['email'],
+                birthday=request.POST['birthday'],
+                password=pw_hash)
+
             new_entry.save()
             request.session['user_id'] = new_entry.id
 
             return redirect("/success")
 
 def login(request):
-    user = User.objects.filter(email=request.POST['email'])
+    if request.session['user_id'] != 'logged out':
+        return redirect('/')
+
     errors = User.objects.basic_validator(request.POST)
     request.session['registration_message'] = 'none'
     request.session['login_message'] = 'inline-block'
 
+    current_user = User.objects.filter(email=request.POST['email'])
+
     if len(errors) > 0:
         for key, value in errors.items():
+            print(key)
             messages.error(request,value)
         return redirect('/')
+    else:
+        request.session['user_id'] = current_user[0].id
+        return redirect('/success')
 
-    if len(user) > 0:
-        logged_user = user[0] 
-
-        if bcrypt.checkpw(request.POST['password'].encode(), logged_user.password.encode()):
-            request.session['user_id'] = logged_user.id
-            return redirect('/success')
-
-    return redirect("/")
     
 def logout(request):
     request.session['user_id'] = 'logged out'
